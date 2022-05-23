@@ -54,8 +54,8 @@ app = FastAPI(
     redoc_url=None
 )
 
-UPLOAD_FOLDER = "uploads/"
-PROCESSED_FOLDER = "processed/"
+UPLOAD_FOLDER = "/app/uploads/"
+PROCESSED_FOLDER = "/app/processed/"
 file_processed_flag = False
 FILENAME = ""
 @app.post('/upload_video')
