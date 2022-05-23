@@ -305,17 +305,15 @@ class Processing:
         return True
 
 
+    async def extract_from_image(self, video_path: str,output_folder:str,filename:str):
+        if frame is None:
+            return False
+        else:
+            frame = cv2.resize(frame,(640,640))
+            faces = await self.model.get([frame], threshold=0.6, return_face_data=False,
+                                                    extract_embedding=True, extract_ga=True, limit_faces=0,
+                                                    detect_masks=False)
 
-
-async def extract_from_image(self, video_path: str,output_folder:str,filename:str):
-    if frame is None:
-        return False
-    else:
-        frame = cv2.resize(frame,(640,640))
-        faces = await self.model.get([frame], threshold=0.6, return_face_data=False,
-                                                extract_embedding=True, extract_ga=True, limit_faces=0,
-                                                detect_masks=False)
-
-        logging.info("This is the get_data")
-        logging.info(faces)
-        return(True)
+            logging.info("This is the get_data")
+            logging.info(faces)
+            return(True)
