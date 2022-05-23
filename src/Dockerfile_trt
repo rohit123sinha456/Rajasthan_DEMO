@@ -20,6 +20,7 @@ RUN $PIP_INSTALL cupy-cuda114 pynvjpeg
 
 WORKDIR /app
 COPY api_trt /app
-
+RUN mkdir uploads
+RUN mkdir processed
 ENTRYPOINT [ "bash" ]
 CMD ["entrypoint.sh"]
