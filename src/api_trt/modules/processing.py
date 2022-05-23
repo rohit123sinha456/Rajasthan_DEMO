@@ -246,6 +246,8 @@ class Processing:
         while video.isOpened():
             # Read a new frame
             ok, frame = video.read()
+            if(frame is None):
+                break
             curr += 1 
             #if(curr-prev>=2):
             try:
