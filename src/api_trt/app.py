@@ -75,7 +75,7 @@ async def draw_video():
     global FILENAME
     output = await processing.draw_faces_in_videos(os.path.join(UPLOAD_FOLDER,FILENAME),PROCESSED_FOLDER,FILENAME)
     file_processed_flag = output
-    return {"message":"File Processing of "+FILENAME +" is successful"+output}
+    return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
 
 
 @app.get('/download_video')
