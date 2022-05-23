@@ -78,6 +78,16 @@ async def draw_video():
     return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
 
 
+@app.post('/video_recognition', tags=['Detection & recognition'])
+async def draw_video():
+    global file_processed_flag
+    global FILENAME
+    output = await processing.extract_from_video(os.path.join(UPLOAD_FOLDER,FILENAME),PROCESSED_FOLDER,FILENAME)
+    file_processed_flag = output
+    return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
+
+
+
 @app.get('/download_video')
 def read_video():
     global file_processed_flag
