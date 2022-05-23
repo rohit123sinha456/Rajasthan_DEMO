@@ -237,7 +237,7 @@ class Processing:
 # This is the part of the coe where we read the video from a folder and process it
 
     async def draw_faces_in_videos(self, video_path: str,output_folder:str,filename:str):
-        out = cv2.VideoWriter(os.path.join(output_folder,filename),cv2.VideoWriter_fourcc(*'DIVX'), 15, (640,640))
+        out = cv2.VideoWriter(os.path.join(output_folder,filename),cv2.VideoWriter_fourcc(*'mp4v'), 15, (640,640))
         video = cv2.VideoCapture(video_path)
         ok, frame = video.read()
         prev = 0
