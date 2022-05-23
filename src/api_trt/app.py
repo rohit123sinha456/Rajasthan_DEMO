@@ -79,12 +79,27 @@ async def draw_video():
 
 
 @app.post('/video_recognition', tags=['Detection & recognition'])
-async def draw_video():
+async def vide_recog():
     global file_processed_flag
     global FILENAME
     output = await processing.extract_from_video(os.path.join(UPLOAD_FOLDER,FILENAME),PROCESSED_FOLDER,FILENAME)
     file_processed_flag = output
     return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
+
+
+
+@app.post('/image_recognition', tags=['Detection & recognition'])
+async def image_recog(file: UploadFile = File(...)):
+    if(os.path.exists(UPLOAD_FOLDER+file.filename)):
+        return{"message":"File Exists"}
+    with open(f'{UPLOAD_FOLDER+file.filename}', "wb") as buffer:
+        shutil.copyfileobj(file.file,buffer)
+    output = await processing.extract_from_image(os.path.join(UPLOAD_FOLDER,file.filename),PROCESSED_FOLDER,file.filename)
+    file_processed_flag = output
+    return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
+
+
+
 
 
 
