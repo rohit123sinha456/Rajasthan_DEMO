@@ -259,9 +259,10 @@ class Processing:
                                             draw_scores=True,
                                             draw_sizes=True)
                 curr = 0
-                imgarr.append(frame)
-                out.write(frame)
-            except:
+                imgarr.append(image)
+                out.write(image)
+            except Exception as e:
+                print(e)
                 return False
         video.release()
         out.release()
