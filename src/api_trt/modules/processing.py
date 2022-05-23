@@ -305,7 +305,8 @@ class Processing:
         return True
 
 
-    async def extract_from_image(self, video_path: str,output_folder:str,filename:str):
+    async def extract_from_image(self, img_path: str,output_folder:str,filename:str):
+        frame = cv2.imread(img_path)
         if frame is None:
             return False
         else:
