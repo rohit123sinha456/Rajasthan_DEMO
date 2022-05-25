@@ -358,17 +358,18 @@ class Processing:
                     logging.info("b2")
                     source_embedding = self.embeding(faces[0])
                     logging.info("b3")
+                    logging.info(faces[0])
+                    logging.info("Similarity Embedding")
+                    logging.info(target_embedding)
+                    logging.info("Source Embedding")
+                    logging.info(source_embedding)
                     matched_face = self.similarities(faces[0],target_embedding,source_embedding)
-                    logging.info("b4")
                     frames_to_save = self.model.draw_faces(frame,[matched_face],
                                                 draw_landmarks=False,
                                                 draw_scores=False,
                                                 draw_sizes=False)
-                    logging.info("b5")
                     imgarr.append(frames_to_save)
-                    logging.info("b6")
                     out.write(frames_to_save)
-                    logging.info("b7")
                     took = time.time() - t0
                     logging.info("The time it is taking to processes one frame is is ms"+str(took*1000))
                     total_time = total_time + took
