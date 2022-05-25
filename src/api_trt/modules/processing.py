@@ -273,39 +273,6 @@ class Processing:
 
 
 
-    async def extract_from_video(self, video_path: str,output_folder:str,filename:str):
-        out = cv2.VideoWriter(os.path.join(output_folder,filename),cv2.VideoWriter_fourcc(*'mp4v'), 15, (640,640))
-        video = cv2.VideoCapture(video_path)
-        ok, frame = video.read()
-        prev = 0
-        curr = 0
-        imgarr = []
-        while video.isOpened():
-            # Read a new frame
-            ok, frame = video.read()
-            if(frame is None):
-                break
-            curr += 1 
-            #if(curr-prev>=2):
-            try:
-                frame = cv2.resize(frame,(640,640))
-                faces = await self.model.get([frame], threshold=0.6, return_face_data=False,
-                                            extract_embedding=True, extract_ga=True, limit_faces=0,
-                                            detect_masks=False)
-
-                logging.info("This is the get_data")
-                #logging.info(faces)
-                curr = 0
-            except Exception as e:
-                print(e)
-                return False
-        video.release()
-        out.release()
-        cv2.destroyAllWindows()
-        return True
-
-
-
     def similarities(self,faces,target,embed):
         similarities = []
         for i in embed:
@@ -349,9 +316,60 @@ class Processing:
             logging.info("This is the Source Frame")
             logging.info(matched_face)
             frames_to_save = self.model.draw_faces(source_frame,[matched_face],
-                                            draw_landmarks=True,
-                                            draw_scores=True,
-                                            draw_sizes=True)
+                                            draw_landmarks=False,
+                                            draw_scores=False,
+                                            draw_sizes=False)
             file_path = os.path.join(output_folder,"output.jpg")
             cv2.imwrite(file_path,frames_to_save)
             return(True)
+
+
+
+# Extracting faces from video
+    async def extract_from_video(self, img_path: str,output_folder:str,files):
+        target = os.path.join(img_path,files[0].filename)
+        source = os.path.join(img_path,files[1].filename)
+        target_frame = cv2.imread(target)
+        out = cv2.VideoWriter(os.path.join(output_folder,files[1].filename),cv2.VideoWriter_fourcc(*'mp4v'), 15, (640,640))
+        video = cv2.VideoCapture(source)
+        if target_frame is None:
+            return False
+        else:
+            ok, frame = video.read()
+            prev = 0
+            curr = 0
+            imgarr = []
+            target_frame = cv2.resize(target_frame,(640,640))
+            target_faces = await self.model.get([target_frame], threshold=0.6, return_face_data=False,
+                                                    extract_embedding=True, extract_ga=True, limit_faces=0,
+                                                    detect_masks=False)
+            target_embedding = self.embeding(target_faces[0])
+            while video.isOpened():
+                ok, frame = video.read()
+                if(frame is None):
+                    break
+                curr += 1 
+                try:
+                    frame = cv2.resize(frame,(640,640))
+                    faces = await self.model.get([frame], threshold=0.6, return_face_data=False,
+                                                extract_embedding=True, extract_ga=True, limit_faces=0,
+                                                detect_masks=False)
+
+                    source_embedding = self.embeding(faces[0])
+                    matched_face = self.similarities(faces[0],target_embedding,source_embedding)
+                    frames_to_save = self.model.draw_faces(frame,[matched_face],
+                                                draw_landmarks=False,
+                                                draw_scores=False,
+                                                draw_sizes=False)
+                    curr = 0
+                    imgarr.append(frames_to_save)
+                    out.write(frames_to_save)
+                except Exception as e:
+                    print(e)
+                    return False
+            
+            video.release()
+            out.release()
+            cv2.destroyAllWindows()
+            return(True)
+        

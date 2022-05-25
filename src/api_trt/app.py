@@ -60,7 +60,7 @@ file_processed_flag = False
 FILENAME = ""
 
 
-@app.post('/upload_video')
+@app.post('/upload_video', tags=['Detection'])
 def read_video(file: UploadFile = File(...)):
     global FILENAME
     FILENAME = file.filename
@@ -71,7 +71,7 @@ def read_video(file: UploadFile = File(...)):
     FILENAME = file.filename
     return {"message":"File Created"}
 
-@app.post('/video_detections', tags=['Detection & recognition'])
+@app.post('/video_detections', tags=['Detection'])
 async def draw_video():
     global file_processed_flag
     global FILENAME
@@ -80,17 +80,8 @@ async def draw_video():
     return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
 
 
-@app.post('/video_recognition', tags=['Detection & recognition'])
-async def vide_recog():
-    global file_processed_flag
-    global FILENAME
-    output = await processing.extract_from_video(os.path.join(UPLOAD_FOLDER,FILENAME),PROCESSED_FOLDER,FILENAME)
-    file_processed_flag = output
-    return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
 
-
-
-@app.post('/image_recognition', tags=['Detection & recognition'])
+@app.post('/image_recognition', tags=['Image recognition'])
 async def image_recog(files: List[UploadFile]):
     global file_processed_flag
     if(len(files) != 2):
@@ -105,7 +96,26 @@ async def image_recog(files: List[UploadFile]):
     return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
 
 
-@app.get('/download_video')
+
+@app.post('/video_recognition', tags=['Video recognition'])
+async def video_recognition(files: List[UploadFile]):
+    global file_processed_flag
+    global FILENAME
+    FILENAME = files[1].filename
+    if(len(files) != 2):
+        return{"message":"Please input two files one of target and one of the source"}
+    for file in files:
+        if(os.path.exists(UPLOAD_FOLDER+file.filename)):
+            return{"message":"File Exists"}
+        with open(f'{UPLOAD_FOLDER+file.filename}', "wb") as buffer:
+            shutil.copyfileobj(file.file,buffer)
+    output = await processing.extract_from_video(UPLOAD_FOLDER,PROCESSED_FOLDER,files)
+    file_processed_flag = output
+    return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
+
+
+
+@app.get('/download_video', tags=['Download'])
 def read_video():
     global file_processed_flag
     global FILENAME
@@ -116,7 +126,7 @@ def read_video():
     else:
         return {"message":"File Still Processing"}
 
-@app.get('/download_image')
+@app.get('/download_image', tags=['Download'])
 def read_video():
     global file_processed_flag
     file_path = os.path.join(PROCESSED_FOLDER,"output.jpg")
