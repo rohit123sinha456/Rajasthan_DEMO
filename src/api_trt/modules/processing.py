@@ -309,12 +309,6 @@ class Processing:
             source_embedding = self.embeding(source_faces[0])
             target_embedding = self.embeding(target_faces[0])
             matched_face = self.similarities(source_faces[0],target_embedding,source_embedding)
-            logging.info("This is the Target FRame")
-            logging.info(target_faces)
-            logging.info("This is the Source Frame")
-            logging.info(source_faces)
-            logging.info("This is the Source Frame")
-            logging.info(matched_face)
             frames_to_save = self.model.draw_faces(source_frame,[matched_face],
                                             draw_landmarks=False,
                                             draw_scores=False,
@@ -332,9 +326,12 @@ class Processing:
         target_frame = cv2.imread(target)
         out = cv2.VideoWriter(os.path.join(output_folder,files[1].filename),cv2.VideoWriter_fourcc(*'mp4v'), 15, (640,640))
         video = cv2.VideoCapture(source)
+        logging.info("The source and target file is"+target+" and "+source)
         if target_frame is None:
+            logging.info("The target frame is None")
             return False
         else:
+            logging.info("The target image is read successfully")
             ok, frame = video.read()
             prev = 0
             curr = 0
@@ -344,12 +341,15 @@ class Processing:
                                                     extract_embedding=True, extract_ga=True, limit_faces=0,
                                                     detect_masks=False)
             target_embedding = self.embeding(target_faces[0])
+            logging.info("The target embedding is siccessfully generated")
+            total_time = 0
             while video.isOpened():
                 ok, frame = video.read()
                 if(frame is None):
+                    logging.info("The frame of the source video became None")
                     break
-                curr += 1 
                 try:
+                    t0 = time.time()
                     frame = cv2.resize(frame,(640,640))
                     faces = await self.model.get([frame], threshold=0.6, return_face_data=False,
                                                 extract_embedding=True, extract_ga=True, limit_faces=0,
@@ -361,13 +361,16 @@ class Processing:
                                                 draw_landmarks=False,
                                                 draw_scores=False,
                                                 draw_sizes=False)
-                    curr = 0
                     imgarr.append(frames_to_save)
                     out.write(frames_to_save)
+                    took = time.time() - t0
+                    logging.info("The time it is taking to processes one frame is is ms"+str(took*1000))
+                    total_time = total_time + took
                 except Exception as e:
-                    print(e)
+                    logging.info("Exception occured while matching faces")
+                    logging.info(e)
                     return False
-            
+            logging.info("The video is processed in :"+str(total_time*1000)+"ms")
             video.release()
             out.release()
             cv2.destroyAllWindows()

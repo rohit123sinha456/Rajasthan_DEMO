@@ -99,6 +99,7 @@ async def image_recog(files: List[UploadFile]):
 
 @app.post('/video_recognition', tags=['Video recognition'])
 async def video_recognition(files: List[UploadFile]):
+    t0 = time.time()
     global file_processed_flag
     global FILENAME
     FILENAME = files[1].filename
@@ -109,6 +110,8 @@ async def video_recognition(files: List[UploadFile]):
             return{"message":"File Exists"}
         with open(f'{UPLOAD_FOLDER+file.filename}', "wb") as buffer:
             shutil.copyfileobj(file.file,buffer)
+    took = time.time() - t0
+    logging.info("Target and source successfully written to disk in "+str(took*1000)+" ms")
     output = await processing.extract_from_video(UPLOAD_FOLDER,PROCESSED_FOLDER,files)
     file_processed_flag = output
     return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
