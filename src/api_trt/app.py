@@ -58,6 +58,8 @@ UPLOAD_FOLDER = "/app/uploads/"
 PROCESSED_FOLDER = "/app/processed/"
 file_processed_flag = False
 FILENAME = ""
+
+
 @app.post('/upload_video')
 def read_video(file: UploadFile = File(...)):
     global FILENAME
@@ -89,18 +91,17 @@ async def vide_recog():
 
 
 @app.post('/image_recognition', tags=['Detection & recognition'])
-async def image_recog(file: UploadFile = File(...)):
-    if(os.path.exists(UPLOAD_FOLDER+file.filename)):
-        return{"message":"File Exists"}
-    with open(f'{UPLOAD_FOLDER+file.filename}', "wb") as buffer:
-        shutil.copyfileobj(file.file,buffer)
-    output = await processing.extract_from_image(os.path.join(UPLOAD_FOLDER,file.filename),PROCESSED_FOLDER,file.filename)
+async def image_recog(files: List[UploadFile]):
+    if(len(files) != 2):
+        return{"message":"Please input two files one of target and one of the source"}
+    for file in files:
+        if(os.path.exists(UPLOAD_FOLDER+file.filename)):
+            return{"message":"File Exists"}
+        with open(f'{UPLOAD_FOLDER+file.filename}', "wb") as buffer:
+            shutil.copyfileobj(file.file,buffer)
+    output = await processing.extract_from_image(UPLOAD_FOLDER,PROCESSED_FOLDER,files)
     file_processed_flag = output
     return {"message":"File Processing of "+FILENAME +" is successful"+str(output)}
-
-
-
-
 
 
 @app.get('/download_video')
@@ -114,7 +115,18 @@ def read_video():
     else:
         return {"message":"File Still Processing"}
 
-
+@app.get('/clear_storage')
+def clear_storage():
+    try:
+        dir = '/app/uploads'
+        for f in os.listdir(dir):
+            os.remove(os.path.join(dir, f))
+        dir1 = '/app/processed'
+        for f in os.listdir(dir1):
+            os.remove(os.path.join(dir1, f))
+    except:
+        return{"message":"Failed to delete the contents of "+dir+" and "+dir1}
+    return{"message":"Successfully deleted the files of "+dir+" and "+dir1}
 
 @app.get('/info', tags=['Utility'])
 def info():

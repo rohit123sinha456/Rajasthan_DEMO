@@ -7,7 +7,7 @@ import time
 import os
 import logging
 import httpx
-
+from scipy import spatial
 import numpy as np
 import cv2
 from functools import partial
@@ -305,16 +305,47 @@ class Processing:
         return True
 
 
-    async def extract_from_image(self, img_path: str,output_folder:str,filename:str):
-        frame = cv2.imread(img_path)
-        if frame is None:
+
+    def similarities(self,faces,target,embed):
+        similarities = []
+        for i in embed:
+            result = 1 - spatial.distance.cosine(i, target)
+            similarities.append(result)
+        match = np.argmax(similarities)
+        return faces[match]
+
+    def embeding(self,faces): 
+        embed = []
+        for i in range(len(faces)):
+            d=faces[i]
+            embeddings = d['vec']
+            embed.append(embeddings)
+        return embed
+
+
+    async def extract_from_image(self, img_path: str,output_folder:str,files):
+        target = os.path.join(img_path,files[0].filename)
+        source = os.path.join(img_path,files[1].filename)
+        target_frame = cv2.imread(target)
+        source_frame = cv2.imread(source)
+        if target_frame is None:
             return False
         else:
-            frame = cv2.resize(frame,(640,640))
-            faces = await self.model.get([frame], threshold=0.6, return_face_data=False,
+            target_frame = cv2.resize(target_frame,(640,640))
+            target_faces = await self.model.get([target_frame], threshold=0.6, return_face_data=False,
                                                     extract_embedding=True, extract_ga=True, limit_faces=0,
                                                     detect_masks=False)
-
-            logging.info("This is the get_data")
-            logging.info(faces)
+            source_frame = cv2.resize(source_frame,(640,640))
+            source_faces = await self.model.get([source_frame], threshold=0.6, return_face_data=False,
+                                                    extract_embedding=True, extract_ga=True, limit_faces=0,
+                                                    detect_masks=False)
+            source_embedding = self.embeding(source_faces[0])
+            target_embedding = self.embeding(target_faces[0])
+            matched_face = self.similarities(source_faces[0],target_embedding,source_embedding)
+            logging.info("This is the Target FRame")
+            logging.info(target_faces)
+            logging.info("This is the Source Frame")
+            logging.info(source_faces)
+            logging.info("This is the Source Frame")
+            logging.info(matched_face)
             return(True)
