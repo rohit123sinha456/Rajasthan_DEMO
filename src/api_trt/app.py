@@ -47,8 +47,8 @@ processing = Processing(det_name=configs.models.det_name, rec_name=configs.model
                         )
 
 app = FastAPI(
-    title="InsightFace-REST",
-    description="FastAPI wrapper for InsightFace API.",
+    title="Rajasthan API",
+    description="FastAPI wrapper for Rajasthan API.",
     version=__version__,
     docs_url=None,
     redoc_url=None
@@ -92,6 +92,7 @@ async def vide_recog():
 
 @app.post('/image_recognition', tags=['Detection & recognition'])
 async def image_recog(files: List[UploadFile]):
+    global file_processed_flag
     if(len(files) != 2):
         return{"message":"Please input two files one of target and one of the source"}
     for file in files:
