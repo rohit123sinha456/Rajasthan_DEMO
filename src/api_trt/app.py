@@ -115,6 +115,20 @@ def read_video():
     else:
         return {"message":"File Still Processing"}
 
+@app.get('/download_image')
+def read_video():
+    global file_processed_flag
+    file_path = os.path.join(PROCESSED_FOLDER,"output.jpg")
+    print(file_path)
+    if(file_processed_flag):
+        return FileResponse(file_path,media_type="image/jpeg")
+    else:
+        return {"message":"File Still Processing"}
+
+
+
+
+
 @app.get('/clear_storage')
 def clear_storage():
     try:

@@ -348,4 +348,10 @@ class Processing:
             logging.info(source_faces)
             logging.info("This is the Source Frame")
             logging.info(matched_face)
+            frames_to_save = self.model.draw_faces(source_frame,[matched_face],
+                                            draw_landmarks=True,
+                                            draw_scores=True,
+                                            draw_sizes=True)
+            file_path = os.path.join(output_folder,"output.jpg")
+            cv2.imwrite(file_path,frames_to_save)
             return(True)
