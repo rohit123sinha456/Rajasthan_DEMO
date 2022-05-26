@@ -358,7 +358,7 @@ class Processing:
                     logging.info("b2")
                     source_embedding = self.embeding(faces[0])
                     logging.info("b3")
-                    if(len(source_embedding)>0 and len(target_embedding>0) and len(faces[0])>0):
+                    if(len(source_embedding)>0 and len(target_embedding)>0 and len(faces[0])>0):
                         matched_face = self.similarities(faces[0],target_embedding,source_embedding)
                         frames_to_save = self.model.draw_faces(frame,[matched_face],
                                                     draw_landmarks=False,
