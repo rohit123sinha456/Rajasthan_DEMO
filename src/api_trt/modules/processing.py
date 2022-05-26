@@ -358,22 +358,25 @@ class Processing:
                     logging.info("b2")
                     source_embedding = self.embeding(faces[0])
                     logging.info("b3")
+                    if(len(source_embedding)>0 and len(target_embedding>0) and len(faces[0])>0):
+                        matched_face = self.similarities(faces[0],target_embedding,source_embedding)
+                        frames_to_save = self.model.draw_faces(frame,[matched_face],
+                                                    draw_landmarks=False,
+                                                    draw_scores=False,
+                                                    draw_sizes=False)
+                        imgarr.append(frames_to_save)
+                        out.write(frames_to_save)
+                        took = time.time() - t0
+                        logging.info("The time it is taking to processes one frame is is ms"+str(took*1000))
+                        total_time = total_time + took
+                    else:
+                        logging.info("Source or Embedding or Frame is blank")
+                except Exception as e:
                     logging.info(faces[0])
                     logging.info("Similarity Embedding")
                     logging.info(target_embedding)
                     logging.info("Source Embedding")
                     logging.info(source_embedding)
-                    matched_face = self.similarities(faces[0],target_embedding,source_embedding)
-                    frames_to_save = self.model.draw_faces(frame,[matched_face],
-                                                draw_landmarks=False,
-                                                draw_scores=False,
-                                                draw_sizes=False)
-                    imgarr.append(frames_to_save)
-                    out.write(frames_to_save)
-                    took = time.time() - t0
-                    logging.info("The time it is taking to processes one frame is is ms"+str(took*1000))
-                    total_time = total_time + took
-                except Exception as e:
                     logging.info("Exception occured while matching faces")
                     logging.info(e)
                     return False
