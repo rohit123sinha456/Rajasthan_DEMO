@@ -6,6 +6,7 @@ import base64
 import time
 import os
 import logging
+import traceback
 import httpx
 from scipy import spatial
 import numpy as np
@@ -392,13 +393,14 @@ class Processing:
                     else:
                         logging.info("Source or Embedding or Frame is blank")
                 except Exception as e:
-                    logging.info(faces[0])
-                    logging.info("Similarity Embedding")
-                    logging.info(target_embedding)
-                    logging.info("Source Embedding")
-                    logging.info(source_embedding)
-                    logging.info("Exception occured while matching faces")
+                    # logging.info(faces[0])
+                    # logging.info("Similarity Embedding")
+                    # logging.info(target_embedding)
+                    # logging.info("Source Embedding")
+                    # logging.info(source_embedding)
+                    logging.exception("Exception occured while matching faces")
                     logging.info(e)
+                    traceback.print_exc()
                     return False
             logging.info("The video is processed in :"+str(total_time*1000)+"ms")
             video.release()
