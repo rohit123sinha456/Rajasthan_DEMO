@@ -277,6 +277,8 @@ class Processing:
         similarities = []
         logging.info("Starting the FOR Loop in similarities")
         for i in embed:
+            logging.info(len(i))
+            logging.info(len(target))
             result = 1 - spatial.distance.cosine(i, target)
             logging.info(result)
             similarities.append(result)
