@@ -103,6 +103,7 @@ for i in $(seq 0 $(($n_gpu - 1)) ); do
     ((p++));
     docker run  -p $port:18080\
         --gpus $device\
+        --restart unless-stopped\
         -d\
         -e LOG_LEVEL=$log_level\
         -e USE_NVJPEG=False\
