@@ -351,21 +351,29 @@ class Processing:
                 try:
                     t0 = time.time()
                     frame = cv2.resize(frame,(640,640))
-                    logging.info("b1")
+                    logging.info("Resizing frames to 640, 640")
                     faces = await self.model.get([frame], threshold=0.6, return_face_data=False,
                                                 extract_embedding=True, extract_ga=True, limit_faces=0,
                                                 detect_masks=False)
-                    logging.info("b2")
+                    logging.info("Geting faces embedding")
+                    logging.info(len(faces),len(faces[0]))
                     source_embedding = self.embeding(faces[0])
-                    logging.info("b3")
+                    logging.info("Making Source Embedding")
+                    logging.info(len(source_embedding))
+                    logging.info("Target embedding length")
+                    logging.info(len(target_embedding))
                     if(len(source_embedding)>0 and len(target_embedding)>0 and len(faces[0])>0):
                         matched_face = self.similarities(faces[0],target_embedding,source_embedding)
+                        logging.info("Matched faces are computed")
                         frames_to_save = self.model.draw_faces(frame,[matched_face],
                                                     draw_landmarks=False,
                                                     draw_scores=False,
                                                     draw_sizes=False)
+                        logging.info("Frame are Saved")
                         imgarr.append(frames_to_save)
+                        logging.info("Frame are Appened")
                         out.write(frames_to_save)
+                        logging.info("Frame are writteen to the Video Writer")
                         took = time.time() - t0
                         logging.info("The time it is taking to processes one frame is is ms"+str(took*1000))
                         total_time = total_time + took
