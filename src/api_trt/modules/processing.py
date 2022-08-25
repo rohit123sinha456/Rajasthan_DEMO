@@ -275,10 +275,14 @@ class Processing:
 
     def similarities(self,faces,target,embed):
         similarities = []
+        logging.info("Starting the FOR Loop in similarities")
         for i in embed:
             result = 1 - spatial.distance.cosine(i, target)
+            logging.info(result)
             similarities.append(result)
         match = np.argmax(similarities)
+        logging.info("The matched index is")
+        logging.info(match)
         return faces[match]
 
     def embeding(self,faces): 
