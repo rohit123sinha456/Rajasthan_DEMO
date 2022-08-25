@@ -356,7 +356,7 @@ class Processing:
                                                 extract_embedding=True, extract_ga=True, limit_faces=0,
                                                 detect_masks=False)
                     logging.info("Geting faces embedding")
-                    logging.info(len(faces),len(faces[0]))
+                    logging.info(len(faces[0]))
                     source_embedding = self.embeding(faces[0])
                     logging.info("Making Source Embedding")
                     logging.info(len(source_embedding))

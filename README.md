@@ -413,3 +413,8 @@ REST API:
   speed increase and memory usage optimization)
 
 
+# after deploying run this
+docker exec -it <docker id> mkdir uploads
+docker exec -it <docker id> mkdir processed
+
+

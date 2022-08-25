@@ -153,7 +153,7 @@ def clear_storage():
         for f in os.listdir(dir1):
             os.remove(os.path.join(dir1, f))
     except:
-        return{"message":"Failed to delete the contents of "+dir+" and "+dir1}
+        return{"message":"Failed to delete the contents "}
     return{"message":"Successfully deleted the files of "+dir+" and "+dir1}
 
 @app.get('/info', tags=['Utility'])
