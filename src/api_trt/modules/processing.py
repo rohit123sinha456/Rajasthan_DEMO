@@ -279,7 +279,7 @@ class Processing:
         for i in embed:
             logging.info(len(i))
             logging.info(len(target))
-            result = 1 - spatial.distance.cosine(i, target)
+            result = 1 - spatial.distance.cosine([i], target)
             logging.info(result)
             similarities.append(result)
         match = np.argmax(similarities)
