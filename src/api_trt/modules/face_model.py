@@ -301,13 +301,13 @@ class FaceAnalysis:
             bbox = face["bbox"].astype(int)
             pt1 = tuple(bbox[0:2])
             pt2 = tuple(bbox[2:4])
-            color = (0, 255, 0)
+            color = (255, 0, 0)
             x, y = pt1
             r, b = pt2
             w = r - x
             if face.get("mask") is False:
                     color = (0, 0, 255)
-            cv2.rectangle(image, pt1, pt2, color, 1)
+            cv2.rectangle(image, pt1, pt2, color, 4)
 
             if draw_landmarks:
                 lms = face["landmarks"].astype(int)
